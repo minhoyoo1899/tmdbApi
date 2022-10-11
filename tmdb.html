@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    const root = document.getElementById('root');
+    console.dir(root);
+    const apiKey  = "c4fc9ca86ccc89b226126b6beccd9731";    
+    //https://api.themoviedb.org/3/movie/top_rated?api_key=c4fc9ca86ccc89b226126b6beccd9731&language=en-US&page=1
+
+    function tmdb() {
+      const id = 550;
+      const url = `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}`;   
+      const request = new XMLHttpRequest();
+      request.open("GET", url);
+      request.responseType = "json";
+      request.send();
+      request.addEventListener("load", () => {
+        const apiDat = request.response;
+        console.log(`TMDB`);
+        console.log(apiDat);
+        console.log(apiDat.backdrop_path);
+        console.log(apiDat.poster_path);
+
+        const imgPoster = `https://image.tmdb.org/t/p/original/${apiDat.poster_path}`;
+        const posterurl = `https://www.themoviedb.org/t/p/original/voddFVdjUoAtfoZZp2RUmuZILDI.jpg`;
+        const imgUrl = `https://image.tmdb.org/t/p/w500/${apiDat.backdrop_path}`;
+
+
+        root.innerHTML = `<img src="${imgUrl}" /> <img src="${imgPoster}" /> <img src="${posterurl}" /> <div></div>`;               
+
+    });    
+  }
+
+  tmdb();
+
+  function tmdbRate() {
+    const movie_id = "tt0137523";
+    const id = 550; // 둘다 됨
+    const url = `https://api.themoviedb.org/3/movie/${movie_id}?api_key=${apiKey}&language=en-US`;
+    const request = new XMLHttpRequest();
+    request.open("GET", url);
+    request.responseType = "json";
+    request.send();
+
+    request.addEventListener("load", () => {
+        const apiDat = request.response;
+        console.log(`TMDB`);
+        console.log(apiDat);
+        console.log(apiDat.vote_average);
+        console.log(apiDat.vote_count);
+        root.children[3].innerText = `평점 : ${apiDat.vote_average} 투표 참여 : ${apiDat.vote_count} popularity: ${apiDat.popularity}`;
+      });
+  }
+
+  tmdbRate();
+  </script>
+</body>
+</html>
