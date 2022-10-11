@@ -12,10 +12,23 @@
     const root = document.getElementById('root');
     console.dir(root);
     const apiKey  = "c4fc9ca86ccc89b226126b6beccd9731";    
-    //https://api.themoviedb.org/3/movie/top_rated?api_key=c4fc9ca86ccc89b226126b6beccd9731&language=en-US&page=1
+    const id = 550; 
+    const movie_id = "tt0137523"; // 파이트 클럽 둘중 아무거나 싸도 다 됨
 
-    function tmdb() {
-      const id = 550;
+    const para_id = 496243
+
+    const posterSize = 'w500'; //w92 w154, w185, w342, w500, w780, original
+    const posterSizew500 = 'w500';
+    const posterSizeOri = 'original';
+
+    const lanKo = 'ko'
+    const lanEn = 'en-US';
+
+    const query = 'avengers'; // 원하는 영화 검색
+    
+
+    function tmdb(apiKey, id, posterSize, posterSizew500) {
+      //기본영화 정보      
       const url = `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}`;   
       const request = new XMLHttpRequest();
       request.open("GET", url);
@@ -28,27 +41,26 @@
         console.log(apiDat.backdrop_path);
         console.log(apiDat.poster_path);
 
-        const imgPoster = `https://image.tmdb.org/t/p/original/${apiDat.poster_path}`;
-        const posterurl = `https://www.themoviedb.org/t/p/original/voddFVdjUoAtfoZZp2RUmuZILDI.jpg`;
-        const imgUrl = `https://image.tmdb.org/t/p/w500/${apiDat.backdrop_path}`;
+        const imgPoster = `https://image.tmdb.org/t/p/${posterSize}/${apiDat.poster_path}`;
+        const posterurl = `https://www.themoviedb.org/t/p/${posterSize}/voddFVdjUoAtfoZZp2RUmuZILDI.jpg`;
+        const imgUrl = `https://image.tmdb.org/t/p/${posterSizew500}/${apiDat.backdrop_path}`;
 
 
-        root.innerHTML = `<img src="${imgUrl}" /> <img src="${imgPoster}" /> <img src="${posterurl}" /> <div></div>`;               
+        root.innerHTML = `<img src="${imgUrl}" /> <img src="${imgPoster}" /> <img src="${posterurl}" /> <div></div> <div></div> <div></div>`;               
 
     });    
   }
 
-  tmdb();
+  tmdb(apiKey, id, posterSize, posterSizew500);
 
-  function tmdbRate() {
-    const movie_id = "tt0137523";
-    const id = 550; // 둘다 됨
+  function tmdbinfo(apiKey, movie_id) {
+    //영화 정보 2
+    
     const url = `https://api.themoviedb.org/3/movie/${movie_id}?api_key=${apiKey}&language=en-US`;
     const request = new XMLHttpRequest();
     request.open("GET", url);
     request.responseType = "json";
     request.send();
-
     request.addEventListener("load", () => {
         const apiDat = request.response;
         console.log(`TMDB`);
@@ -59,7 +71,53 @@
       });
   }
 
-  tmdbRate();
+  tmdbinfo(apiKey, movie_id);
+
+  function tmdbFoster(apiKey, id, posterSize, lang) {    
+    const url = `https://api.themoviedb.org/3/movie/496243/images?api_key=${apiKey}&language=${lang}`;
+
+    const request = new XMLHttpRequest();
+    request.open("GET", url);
+    request.responseType = "json";
+    request.send();
+
+    request.addEventListener("load", () => {
+        const apiDat = request.response;
+        console.log(`poster`);
+        console.log(apiDat);
+        // console.log(apiDat.posters);
+        // console.log(apiDat.posters[0].file_path);
+        for(let i=0; apiDat.posters.length; i++){
+          //console.log(apiDat.posters[i]);
+          const imgTag = document.createElement('img');
+          imgTag.src = `https://image.tmdb.org/t/p/${posterSize}/${apiDat.posters[i].file_path}`;
+          root.children[4].appendChild(imgTag);
+        }
+      });
+  }
+
+  tmdbFoster(apiKey, para_id, posterSizeOri, lanKo);
+
+  function tmdbSearchMovie(apiKey, lang, query, posterSize) {
+    const booleanR = false;
+    const url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=${lang}&page=1&include_adult=${booleanR}&query=${query}`;
+
+    const request = new XMLHttpRequest();
+    request.open("GET", url);
+    request.responseType = "json";
+    request.send();
+    request.addEventListener("load", () => {
+      const apiDat = request.response;
+      console.log(`search`);
+      console.log(apiDat);
+      for(let i=0; i<apiDat.results.length; i++) {
+        const imgTag = document.createElement('img');
+        imgTag.src = `https://image.tmdb.org/t/p/${posterSize}/${apiDat.results[i].poster_path}`;
+        root.children[5].appendChild(imgTag);
+      }
+    });
+  } 
+  tmdbSearchMovie(apiKey,lanEn, query, posterSizeOri) ;
   </script>
 </body>
 </html>
